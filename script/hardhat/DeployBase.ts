@@ -37,7 +37,7 @@ async function main() {
     undefined,
     jsonConstants.USDC,
     jsonConstants.WETH,
-    jsonConstants.v2.VELO,
+    jsonConstants.v2.ABX,
     jsonConstants.v2.PoolFactory,
     jsonConstants.v2.Router
   );

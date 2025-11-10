@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.0;
 
 interface IRelay {
@@ -54,7 +54,7 @@ interface IRelay {
     // ALLOWED_CALLER functions
     // -------------------------------------------------
 
-    /// @notice Additional functionality for ALLOWED_CALLER to deposit more VELO into the managed tokenId.
+    /// @notice Additional functionality for ALLOWED_CALLER to deposit more ABX into the managed tokenId.
     ///         This is effectively a bribe bonus for users that deposited into the Relay.
     /// @dev Refer to IVoter.increaseAmount()
     function increaseAmount(uint256 _value) external;

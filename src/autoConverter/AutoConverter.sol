@@ -1,13 +1,12 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
-import {IOptimizer} from "../interfaces/IOptimizer.sol";
 import {IAutoConverter} from "../interfaces/IAutoConverter.sol";
 import {IRelayFactory} from "../interfaces/IRelayFactory.sol";
 
-import {VelodromeTimeLibrary} from "@velodrome/contracts/libraries/VelodromeTimeLibrary.sol";
+import {ProtocolTimeLibrary} from "../libraries/ProtocolTimeLibrary.sol";
 
-import {IRouter} from "@velodrome/contracts/interfaces/IRouter.sol";
+import {IRouter} from "../interfaces/IRouter.sol";
 
 import {Relay} from "../Relay.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -55,7 +54,7 @@ contract AutoConverter is IAutoConverter, Relay {
         _;
         uint256 delta = IERC20(token).balanceOf(address(this)) - balanceBefore;
         if (delta > 0) {
-            amountTokenEarned[VelodromeTimeLibrary.epochStart(block.timestamp)] += delta;
+            amountTokenEarned[ProtocolTimeLibrary.epochStart(block.timestamp)] += delta;
         }
     }
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.0;
 
 interface IRelayFactory {
@@ -72,7 +72,7 @@ interface IRelayFactory {
     function addHighLiquidityToken(address _token) external;
 
     /// @notice View if an address is registered as a high liquidity token
-    ///         This indicates a token has significant liquidity to swap route into VELO
+    ///         This indicates a token has significant liquidity to swap route into ABX
     ///         If a token address returns true, it cannot be swept from an AutoCompounder
     /// @param _token Address of token to query
     /// @return True if token is registered as a high liquidity token, else false

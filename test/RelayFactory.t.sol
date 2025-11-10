@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
-
-import "src/RelayFactory.sol";
-import "src/Registry.sol";
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "@velodrome/test/BaseTest.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "src/RelayFactory.sol";
+import "src/Registry.sol";
 
 abstract contract RelayFactoryTest is BaseTest {
     event SetKeeperRegistry(address indexed _keeperRegistry);
@@ -40,7 +40,7 @@ abstract contract RelayFactoryTest is BaseTest {
     }
 
     function testCannotCreateAutoCompounderIfTokenNotManaged() public {
-        VELO.approve(address(escrow), TOKEN_1);
+        IERC20(escrow.token()).approve(address(escrow), TOKEN_1);
         tokenId = escrow.createLock(TOKEN_1, MAXTIME);
         vm.expectRevert(IRelayFactory.TokenIdNotManaged.selector);
         relayFactory.createRelay(address(1), tokenId, "", new bytes(0)); // normal

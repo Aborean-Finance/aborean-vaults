@@ -1,16 +1,14 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "test/RelayFactory.t.sol";
 
 import "src/autoConverter/AutoConverter.sol";
-import "src/Optimizer.sol";
 import "src/autoConverter/AutoConverterFactory.sol";
 
 contract AutoConverterFactoryTest is RelayFactoryTest {
     AutoConverterFactory autoConverterFactory;
     AutoConverter autoConverter;
-    Optimizer optimizer;
 
     constructor() {
         deploymentType = Deployment.FORK;
@@ -57,7 +55,7 @@ contract AutoConverterFactoryTest is RelayFactoryTest {
         assertEq(address(autoConverter.router()), address(router));
         assertEq(address(autoConverter.voter()), address(voter));
         assertEq(address(autoConverter.ve()), voter.ve());
-        assertEq(address(autoConverter.velo()), address(VELO));
+        assertEq(address(autoConverter.abx()), escrow.token());
         assertEq(address(autoConverter.distributor()), escrow.distributor());
 
         assertTrue(autoConverter.hasRole(0x00, address(owner))); // DEFAULT_ADMIN_ROLE

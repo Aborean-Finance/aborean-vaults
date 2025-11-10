@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "forge-std/Test.sol";
 import "forge-std/StdJson.sol";
@@ -21,8 +21,7 @@ contract TestDeploy is Script, Test {
     address router;
     address USDC;
     address WETH;
-    address OP;
-    address VELO;
+    address ABX;
     address poolFactory;
     address voter;
     address[] highLiquidityTokens;
@@ -50,8 +49,7 @@ contract TestDeploy is Script, Test {
         // CompoundOptimizer-specific
         USDC = abi.decode(jsonConstants.parseRaw(".USDC"), (address));
         WETH = abi.decode(jsonConstants.parseRaw(".WETH"), (address));
-        OP = abi.decode(jsonConstants.parseRaw(".OP"), (address));
-        VELO = abi.decode(jsonConstants.parseRaw(".v2.VELO"), (address));
+        ABX = abi.decode(jsonConstants.parseRaw(".v2.ABX"), (address));
         poolFactory = abi.decode(jsonConstants.parseRaw(".v2.PoolFactory"), (address));
         // AutoCompounderFactory-specific
         voter = abi.decode(jsonConstants.parseRaw(".v2.Voter"), (address));
@@ -69,8 +67,7 @@ contract TestDeploy is Script, Test {
         assertTrue(router != address(0));
         assertTrue(USDC != address(0));
         assertTrue(WETH != address(0));
-        assertTrue(OP != address(0));
-        assertTrue(VELO != address(0));
+        assertTrue(ABX != address(0));
         assertTrue(poolFactory != address(0));
         assertTrue(voter != address(0));
         assertTrue(highLiquidityTokens.length > 0);
@@ -98,8 +95,7 @@ contract TestDeploy is Script, Test {
         // CompoundOptimizer state checks
         assertEq(deploy.optimizer().weth(), WETH);
         assertEq(deploy.optimizer().usdc(), USDC);
-        assertEq(deploy.optimizer().op(), OP);
-        assertEq(deploy.optimizer().velo(), VELO);
+        assertEq(deploy.optimizer().abx(), ABX);
         assertEq(deploy.optimizer().factory(), poolFactory);
         assertEq(address(deploy.optimizer().router()), router);
 

@@ -1,0 +1,7 @@
+{
+  "Optimizer": "0x087c17F1C369f1874424ba4CF137dd83302bD153",
+  "OptimizerRegistry": "0xdb8ff139c3Cd83F942C98b84F878DD1cd7ec4B85",
+  "AutoCompounderFactory": "0xF2A4106A852141e062BcD8deCD9BE839A66Cb739",
+  "RelayFactoryRegistry": "0x001ef237aeEE1B5FF72dfDCf6F5dA1dd18cC0cd8",
+  "KeeperRegistry": "0xC8D14d98d986adB13d64BeAefC0c6F72099B58A6"
+}

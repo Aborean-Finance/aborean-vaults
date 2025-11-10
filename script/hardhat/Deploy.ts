@@ -6,7 +6,7 @@ import { join } from "path";
 import { writeFile } from "fs/promises";
 import {
   Registry,
-  Optimizer,
+  OptimizerBase,
   AutoCompounderFactory,
 } from "../../artifacts/types";
 
@@ -32,17 +32,16 @@ async function main() {
   const keeperRegistry = await deploy<Registry>("Registry", undefined, []);
   console.log(`KeeperRegistry deployed to ${keeperRegistry.address}`);
 
-  const optimizer = await deploy<Optimizer>(
-    "Optimizer",
+  const optimizer = await deploy<OptimizerBase>(
+    "OptimizerBase",
     undefined,
     jsonConstants.USDC,
     jsonConstants.WETH,
-    jsonConstants.OP,
-    jsonConstants.v2.VELO,
+    jsonConstants.v2.ABX,
     jsonConstants.v2.PoolFactory,
     jsonConstants.v2.Router
   );
-  console.log(`Optimizer deployed to: ${optimizer.address}`);
+  console.log(`OptimizerBase deployed to: ${optimizer.address}`);
 
   const optimizerRegistry = await deploy<Registry>("Registry", undefined, []);
   await optimizerRegistry.approve(optimizer.address);

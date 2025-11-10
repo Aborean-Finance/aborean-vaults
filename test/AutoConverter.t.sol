@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "src/Relay.sol";
 import "src/Registry.sol";
 import "src/autoConverter/AutoConverter.sol";
-import "src/Optimizer.sol";
+import "src/OptimizerBase.sol";
 import "src/autoConverter/AutoConverterFactory.sol";
 
 import "@velodrome/test/BaseTest.sol";
@@ -15,7 +15,7 @@ contract AutoConverterTest is BaseTest {
 
     AutoConverterFactory autoConverterFactory;
     AutoConverter autoConverter;
-    Optimizer optimizer;
+    OptimizerBase optimizer;
     Registry keeperRegistry;
     Registry optimizerRegistry;
     LockedManagedReward lockedManagedReward;
@@ -43,8 +43,9 @@ contract AutoConverterTest is BaseTest {
         vm.startPrank(address(owner));
 
         // Create normal veNFT and deposit into managed
-        deal(address(VELO), address(owner), TOKEN_1);
-        VELO.approve(address(escrow), TOKEN_1);
+        address abx = escrow.token();
+        deal(abx, address(owner), TOKEN_1);
+        IERC20(abx).approve(address(escrow), TOKEN_1);
         tokenId = escrow.createLock(TOKEN_1, MAXTIME);
 
         skipToNextEpoch(1 hours + 1);
@@ -53,11 +54,10 @@ contract AutoConverterTest is BaseTest {
         keeperRegistry = new Registry(new address[](0));
         optimizerRegistry = new Registry(new address[](0));
         // Create auto converter
-        optimizer = new Optimizer(
+        optimizer = new OptimizerBase(
             address(USDC),
             address(WETH),
-            address(FRAX), // OP
-            address(VELO),
+            address(abx),
             address(factory),
             address(router)
         );
@@ -83,13 +83,13 @@ contract AutoConverterTest is BaseTest {
         vm.prank(escrow.team());
         keeperRegistry.approve(address(owner));
 
-        // Create a USDC pool for VELO, WETH, and FRAX (seen as OP in Optimizer)
+        // Create a USDC pool for ABX, WETH, and FRAX
         deal(address(USDC), address(owner), TOKEN_100K * 3);
         deal(address(WETH), address(owner), TOKEN_1 * 3);
-        deal(address(VELO), address(owner), TOKEN_1 * 3);
+        deal(abx, address(owner), TOKEN_1 * 3);
 
-        // @dev these pools have a higher VELO price value than v1 pools
-        _createPoolAndSimulateSwaps(address(VELO), address(USDC), USDC_1, TOKEN_1, address(VELO), 10, 3);
+        // @dev these pools have a higher ABX price value than v1 pools
+        _createPoolAndSimulateSwaps(abx, address(USDC), USDC_1, TOKEN_1, abx, 10, 3);
         _createPoolAndSimulateSwaps(address(WETH), address(USDC), TOKEN_1, TOKEN_100K, address(USDC), 1e6, 3);
         _createPoolAndSimulateSwaps(address(FRAX), address(USDC), TOKEN_1, TOKEN_1, address(USDC), 1e6, 3);
         _createPoolAndSimulateSwaps(address(FRAX), address(DAI), TOKEN_1, TOKEN_1, address(FRAX), 1e6, 3);
@@ -255,8 +255,9 @@ contract AutoConverterTest is BaseTest {
 
     function testIncreaseAmount() public {
         uint256 amount = TOKEN_1;
-        deal(address(VELO), address(owner), amount);
-        VELO.approve(address(autoConverter), amount);
+        address abx = escrow.token();
+        deal(abx, address(owner), amount);
+        IERC20(abx).approve(address(autoConverter), amount);
 
         uint256 balanceBefore = escrow.balanceOfNFT(mTokenId);
         uint256 supplyBefore = escrow.totalSupply();

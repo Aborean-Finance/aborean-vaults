@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: BUSL-1.1
+// SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.0;
 
-import {IRouter} from "@velodrome/contracts/interfaces/IRouter.sol";
+import {IRouter} from "./IRouter.sol";
 
 interface IAutoCompounder {
     error AmountInTooHigh();
@@ -18,7 +18,7 @@ interface IAutoCompounder {
     event Reward(address indexed sender, uint256 balanceRewarded);
     event Compound(uint256 balanceCompounded);
     event SetName(string oldName, string newName);
-    event SwapTokenToVELO(
+    event SwapTokenToABX(
         address indexed claimer,
         address indexed token,
         uint256 amountIn,
@@ -31,22 +31,22 @@ interface IAutoCompounder {
     // Public functions
     // -------------------------------------------------
 
-    /// @notice Swap token held by the autoCompounder into VELO using the optimal route determined by
+    /// @notice Swap token held by the autoCompounder into ABX using the optimal route determined by
     ///         the Optimizer unless the user-provided swap route has a better rate
     ///         Publicly callable in the final 24 hours before the epoch flip or by an authorized keeper starting the 2nd hour of an epoch or an admin
     /// @dev Optional routes are provided when the optional amountOut exceeds the amountOut calculated by Optimizer
-    function swapTokenToVELOWithOptionalRoute(
+    function swapTokenToABXWithOptionalRoute(
         address _tokenToSwap,
         uint256 _slippage,
         IRouter.Route[] memory _optionalRoutes
     ) external;
 
-    /// @notice Claim any rebase by the RewardsDistributor, reward the caller if publicly called, and deposit VELO
+    /// @notice Claim any rebase by the RewardsDistributor, reward the caller if publicly called, and deposit ABX
     ///          into the managed veNFT.
     ///         Publicly callable in the final 24 hours before the epoch flip
     function rewardAndCompound() external;
 
-    /// @notice Claim any rebase by the RewardsDistributor, and deposit VELO into the managed veNFT
+    /// @notice Claim any rebase by the RewardsDistributor, and deposit ABX into the managed veNFT
     function compound() external;
 
     // -------------------------------------------------

@@ -1,0 +1,16 @@
+{
+  "__comment": "Replace all addresses with the deployed Abstract mainnet addresses before running the scripts.",
+  "USDC": "0x84A71ccD554Cc1b02749b35d22F684CC8ec987e1",
+  "WETH": "0x3439153EB7AF838Ad19d56E1571FBD09333C2809",
+  "v2": {
+    "Router": "0xE8142D2f82036B6FC1e79E4aE85cF53FBFfDC998",
+    "ABX": "0x4C68E4102c0F120cce9F08625bd12079806b7C4D",
+    "PoolFactory": "0xF6cDfFf7Ad51caaD860e7A35d6D4075d74039a6B",
+    "Voter": "0xC0F53703e9f4b79fA2FB09a2aeBA487FA97729c9"
+  },
+  "highLiquidityTokens": [
+    "0x0709F39376dEEe2A2dfC94A58EdEb2Eb9DF012bD",
+    "0x3439153EB7AF838Ad19d56E1571FBD09333C2809",
+    "0x9eBe3A824Ca958e4b3Da772D2065518F009CBa62"
+  ]
+}

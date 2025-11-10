@@ -1,0 +1,15 @@
+{
+  "__comment": "Replace all addresses with the deployed Abstract testnet addresses before running the scripts.",
+  "USDC": "0x698f98aB816670692fa9DD8e1486ea0fd253e996",
+  "WETH": "0x9EDCde0257F2386Ce177C3a7FCdd97787F0D841d",
+  "v2": {
+    "Router": "0xd4b272fe775682f980c4C6A4263eC03952cDF77f",
+    "ABX": "0xb6313bE1c20Dc222199EC567951ABc6b5B64DFD6",
+    "PoolFactory": "0xc449Fb893439E696a119412d3D6D9F668f46Ed43",
+    "Voter": "0x8c3C29ed0FF9E3d389301227E923d6e645D527dC"
+  },
+  "highLiquidityTokens": [
+    "0xFAf7f84bAacF74D9b6b70f201479d792e936F8a5",
+    "0x9EDCde0257F2386Ce177C3a7FCdd97787F0D841d"
+  ]
+}

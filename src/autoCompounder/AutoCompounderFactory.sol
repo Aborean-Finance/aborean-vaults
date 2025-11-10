@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import {IAutoCompounderFactory} from "../interfaces/IAutoCompounderFactory.sol";
 import {AutoCompounder} from "./AutoCompounder.sol";
 import {RelayFactory} from "../RelayFactory.sol";
 
-import {IVotingEscrow} from "@velodrome/contracts/interfaces/IVotingEscrow.sol";
+import {IVotingEscrow} from "../interfaces/IVotingEscrow.sol";
 
 import {EnumerableSet} from "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 

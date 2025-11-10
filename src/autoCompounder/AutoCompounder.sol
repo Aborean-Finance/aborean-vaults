@@ -1,12 +1,11 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
-import {IOptimizer} from "../interfaces/IOptimizer.sol";
 import {IAutoCompounder} from "../interfaces/IAutoCompounder.sol";
 import {IAutoCompounderFactory} from "../interfaces/IAutoCompounderFactory.sol";
 
-import {VelodromeTimeLibrary} from "@velodrome/contracts/libraries/VelodromeTimeLibrary.sol";
-import {IRouter} from "@velodrome/contracts/interfaces/IRouter.sol";
+import {ProtocolTimeLibrary} from "../libraries/ProtocolTimeLibrary.sol";
+import {IRouter} from "../interfaces/IRouter.sol";
 
 import {Relay} from "../Relay.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -62,7 +61,7 @@ contract AutoCompounder is IAutoCompounder, Relay {
         _;
         uint256 balAfter = ve.balanceOfNFT(mTokenId);
         if (balBefore < balAfter) {
-            amountTokenEarned[VelodromeTimeLibrary.epochStart(block.timestamp)] += balAfter - balBefore;
+            amountTokenEarned[ProtocolTimeLibrary.epochStart(block.timestamp)] += balAfter - balBefore;
         }
     }
 
@@ -87,28 +86,28 @@ contract AutoCompounder is IAutoCompounder, Relay {
     // -------------------------------------------------
 
     /// @inheritdoc IAutoCompounder
-    function swapTokenToVELOWithOptionalRoute(
+    function swapTokenToABXWithOptionalRoute(
         address _token,
         uint256 _slippage,
         IRouter.Route[] memory _optionalRoute
     ) external nonReentrant {
         _checkSwapPermissions(msg.sender);
         if (_slippage > MAX_SLIPPAGE) revert SlippageTooHigh();
-        if (_token == address(velo)) revert InvalidPath();
+        if (_token == address(abx)) revert InvalidPath();
         if (_token == address(0)) revert ZeroAddress();
         uint256 balance = IERC20(_token).balanceOf(address(this));
         if (balance == 0) revert AmountInZero();
 
-        IRouter.Route[] memory routes = optimizer.getOptimalTokenToTokenRoute(_token, address(velo), balance);
+        IRouter.Route[] memory routes = optimizer.getOptimalTokenToTokenRoute(_token, address(abx), balance);
         uint256 amountOutMin = optimizer.getOptimalAmountOutMin(routes, balance, POINTS, _slippage);
 
         // If an optional route was provided, compare the amountOut with the hardcoded optimizer amountOut to determine which
         // route has a better rate
-        // Used if optional route is not direct _token => VELO as this route is already calculated by Optimizer
+        // Used if optional route is not direct _token => ABX as this route is already calculated by Optimizer
         uint256 optionalRouteLen = _optionalRoute.length;
         if (optionalRouteLen > 1) {
             if (_optionalRoute[0].from != _token) revert InvalidPath();
-            if (_optionalRoute[optionalRouteLen - 1].to != address(velo)) revert InvalidPath();
+            if (_optionalRoute[optionalRouteLen - 1].to != address(abx)) revert InvalidPath();
             // Ensure route only uses high liquidity tokens
             for (uint256 x = 1; x < optionalRouteLen; x++) {
                 if (!autoCompounderFactory.isHighLiquidityToken(_optionalRoute[x].from)) revert NotHighLiquidityToken();
@@ -136,24 +135,24 @@ contract AutoCompounder is IAutoCompounder, Relay {
             keeperLastRun = block.timestamp;
         }
 
-        emit SwapTokenToVELO(msg.sender, _token, balance, amountsOut[amountsOut.length - 1], routes);
+        emit SwapTokenToABX(msg.sender, _token, balance, amountsOut[amountsOut.length - 1], routes);
     }
 
     /// @inheritdoc IAutoCompounder
     function rewardAndCompound() external onlyLastDayOfEpoch {
-        uint256 balance = velo.balanceOf(address(this));
+        uint256 balance = abx.balanceOf(address(this));
         uint256 reward;
 
         if (balance > 0) {
             // reward the caller the minimum of:
-            // - 1% of the VELO designated for compounding (Rounds down)
-            // - The constant VELO reward set by team in AutoCompounderFactory
+            // - 1% of the ABX designated for compounding (Rounds down)
+            // - The constant ABX reward set by team in AutoCompounderFactory
             uint256 compoundRewardAmount = balance / 100;
             uint256 factoryRewardAmount = autoCompounderFactory.rewardAmount();
             reward = compoundRewardAmount < factoryRewardAmount ? compoundRewardAmount : factoryRewardAmount;
 
             if (reward > 0) {
-                velo.transfer(msg.sender, reward);
+                abx.transfer(msg.sender, reward);
             }
             emit Reward(msg.sender, reward);
         }
@@ -164,17 +163,17 @@ contract AutoCompounder is IAutoCompounder, Relay {
     function compound() public syncAmountEarned {
         _handleRebase();
 
-        uint256 balance = velo.balanceOf(address(this));
+        uint256 balance = abx.balanceOf(address(this));
         if (balance > 0) {
             // Deposit the remaining balance into the nft
-            _handleApproval(velo, address(ve), balance);
+            _handleApproval(abx, address(ve), balance);
             ve.increaseAmount(mTokenId, balance);
             emit Compound(balance);
         }
     }
 
     function token() external view override returns (address) {
-        return address(velo);
+        return address(abx);
     }
 
     // -------------------------------------------------

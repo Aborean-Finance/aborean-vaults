@@ -1,0 +1,10 @@
+await op.toString()
+await op.getAddress()
+op.getAddress()
+await op.name();
+console.log(await op.name())
+await op.name
+const op = await ethers.getContractAt('OptimizerBase', Optimizer.address);
+const optimizer = await ethers.getContractAt('OptimizerBase', Optimizer.address);
+const Optimizer = await deployments.get('OptimizerBase');
+const optimizer = await ethers.getContract('OptimizerBase');

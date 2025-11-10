@@ -1,16 +1,16 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "test/RelayFactory.t.sol";
 
 import "src/autoCompounder/AutoCompounder.sol";
-import "src/Optimizer.sol";
+import "src/OptimizerBase.sol";
 import "src/autoCompounder/AutoCompounderFactory.sol";
 
 contract AutoCompounderFactoryTest is RelayFactoryTest {
     AutoCompounderFactory autoCompounderFactory;
     AutoCompounder autoCompounder;
-    Optimizer optimizer;
+    OptimizerBase optimizer;
 
     constructor() {
         deploymentType = Deployment.FORK;
@@ -21,11 +21,10 @@ contract AutoCompounderFactoryTest is RelayFactoryTest {
         escrow.setTeam(address(owner4));
         keeperRegistry = new Registry(new address[](0));
         optimizerRegistry = new Registry(new address[](0));
-        optimizer = new Optimizer(
+        optimizer = new OptimizerBase(
             address(USDC),
             address(WETH),
-            address(FRAX), // OP
-            address(VELO),
+            address(escrow.token()),
             address(factory),
             address(router)
         );
@@ -79,7 +78,7 @@ contract AutoCompounderFactoryTest is RelayFactoryTest {
         assertEq(address(autoCompounder.voter()), address(voter));
         assertEq(address(autoCompounder.optimizer()), address(optimizer));
         assertEq(address(autoCompounder.ve()), voter.ve());
-        assertEq(address(autoCompounder.velo()), address(VELO));
+        assertEq(address(autoCompounder.abx()), escrow.token());
         assertEq(address(autoCompounder.distributor()), escrow.distributor());
 
         assertTrue(autoCompounder.hasRole(0x00, address(owner))); // DEFAULT_ADMIN_ROLE

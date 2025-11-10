@@ -1,25 +1,25 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import {IOptimizerBase} from "./interfaces/IOptimizerBase.sol";
 
-import {IRouter} from "@velodrome/contracts/interfaces/IRouter.sol";
-import {IPoolFactory} from "@velodrome/contracts/interfaces/factories/IPoolFactory.sol";
-import {IPool} from "@velodrome/contracts/interfaces/IPool.sol";
+import {IRouter} from "./interfaces/IRouter.sol";
+import {IPoolFactory} from "./interfaces/IPoolFactory.sol";
+import {IPool} from "./interfaces/IPool.sol";
 
 /// @notice Helper contract to calculate optimal amountOut from the Aerodrome Router
 /// @author velodrome.finance, @pegahcarter, @pedrovalido
 contract OptimizerBase is IOptimizerBase {
     address public immutable weth;
     address public immutable usdc;
-    address public immutable aero;
+    address public immutable abx;
     address public immutable factory;
     IRouter public immutable router;
 
-    constructor(address _usdc, address _weth, address _aero, address _factory, address _router) {
+    constructor(address _usdc, address _weth, address _abx, address _factory, address _router) {
         weth = _weth;
         usdc = _usdc;
-        aero = _aero;
+        abx = _abx;
         factory = _factory;
         router = IRouter(_router);
     }
@@ -31,7 +31,7 @@ contract OptimizerBase is IOptimizerBase {
         // caching
         address _usdc = usdc;
         address _weth = weth;
-        address _aero = aero;
+        address _abx = abx;
         address _factory = factory;
 
         // Create routes for routesTokenToToken
@@ -58,15 +58,15 @@ contract OptimizerBase is IOptimizerBase {
             length += 2;
         }
 
-        if (token1 != _aero) {
-            // token0 <> AERO <> token1
-            // from <stable v2> AERO <> token1
-            routesTokenToToken[length][0] = IRouter.Route(token0, _aero, true, _factory);
-            // from <volatile v2> AERO <> token1
-            routesTokenToToken[length + 1][0] = IRouter.Route(token0, _aero, false, _factory);
+        if (token1 != _abx) {
+            // token0 <> ABX <> token1
+            // from <stable v2> ABX <> token1
+            routesTokenToToken[length][0] = IRouter.Route(token0, _abx, true, _factory);
+            // from <volatile v2> ABX <> token1
+            routesTokenToToken[length + 1][0] = IRouter.Route(token0, _abx, false, _factory);
 
-            routesTokenToToken[length][1] = IRouter.Route(_aero, token1, false, _factory);
-            routesTokenToToken[length + 1][1] = IRouter.Route(_aero, token1, false, _factory);
+            routesTokenToToken[length][1] = IRouter.Route(_abx, token1, false, _factory);
+            routesTokenToToken[length + 1][1] = IRouter.Route(_abx, token1, false, _factory);
             length += 2;
         }
     }

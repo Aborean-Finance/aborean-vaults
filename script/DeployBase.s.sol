@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
@@ -37,7 +37,7 @@ contract Deploy is Script {
         // Optimizer-specific
         address USDC = abi.decode(jsonConstants.parseRaw(".USDC"), (address));
         address WETH = abi.decode(jsonConstants.parseRaw(".WETH"), (address));
-        address VELO = abi.decode(jsonConstants.parseRaw(".v2.VELO"), (address));
+        address ABX = abi.decode(jsonConstants.parseRaw(".v2.ABX"), (address));
         address poolFactory = abi.decode(jsonConstants.parseRaw(".v2.PoolFactory"), (address));
         // AutoCompounderFactory-specific
         address voter = abi.decode(jsonConstants.parseRaw(".v2.Voter"), (address));
@@ -47,7 +47,7 @@ contract Deploy is Script {
 
         keeperRegistry = new Registry(new address[](0));
         // first deploy optimizer to pass into AutoCompounderFactory
-        optimizer = new OptimizerBase(USDC, WETH, VELO, poolFactory, router);
+        optimizer = new OptimizerBase(USDC, WETH, ABX, poolFactory, router);
         // optimizer needs to be approved to be set as default optimizer in relayfactory
         optimizerRegistry = new Registry(new address[](0));
         optimizerRegistry.approve(address(optimizer));

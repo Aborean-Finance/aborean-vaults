@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import "forge-std/Script.sol";
 import "forge-std/StdJson.sol";
@@ -7,7 +7,7 @@ import "forge-std/StdJson.sol";
 import {Registry} from "src/Registry.sol";
 import {AutoCompounder} from "src/autoCompounder/AutoCompounder.sol";
 import {AutoCompounderFactory} from "src/autoCompounder/AutoCompounderFactory.sol";
-import {Optimizer} from "src/Optimizer.sol";
+import {OptimizerBase} from "src/OptimizerBase.sol";
 
 contract Deploy is Script {
     using stdJson for string;
@@ -22,7 +22,7 @@ contract Deploy is Script {
     Registry public keeperRegistry;
     Registry public optimizerRegistry;
     Registry public relayFactoryRegistry;
-    Optimizer public optimizer;
+    OptimizerBase public optimizer;
     string public jsonConstants;
     string public jsonOutput;
 
@@ -37,8 +37,7 @@ contract Deploy is Script {
         // Optimizer-specific
         address USDC = abi.decode(jsonConstants.parseRaw(".USDC"), (address));
         address WETH = abi.decode(jsonConstants.parseRaw(".WETH"), (address));
-        address OP = abi.decode(jsonConstants.parseRaw(".OP"), (address));
-        address VELO = abi.decode(jsonConstants.parseRaw(".v2.VELO"), (address));
+        address ABX = abi.decode(jsonConstants.parseRaw(".v2.ABX"), (address));
         address poolFactory = abi.decode(jsonConstants.parseRaw(".v2.PoolFactory"), (address));
         // AutoCompounderFactory-specific
         address voter = abi.decode(jsonConstants.parseRaw(".v2.Voter"), (address));
@@ -48,7 +47,7 @@ contract Deploy is Script {
 
         keeperRegistry = new Registry(new address[](0));
         // first deploy optimizer to pass into AutoCompounderFactory
-        optimizer = new Optimizer(USDC, WETH, OP, VELO, poolFactory, router);
+        optimizer = new OptimizerBase(USDC, WETH, ABX, poolFactory, router);
         // optimizer needs to be approved to be set as default optimizer in relayfactory
         optimizerRegistry = new Registry(new address[](0));
         optimizerRegistry.approve(address(optimizer));

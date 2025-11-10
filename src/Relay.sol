@@ -1,14 +1,14 @@
-// SPDX-License-Identifier: BUSL-1.1
-pragma solidity 0.8.19;
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity 0.8.20;
 
 import {IRelay} from "./interfaces/IRelay.sol";
 import {IRelayFactory} from "./interfaces/IRelayFactory.sol";
 
-import {IOptimizer} from "./interfaces/IOptimizer.sol";
+import {IOptimizerBase} from "./interfaces/IOptimizerBase.sol";
 
-import {IVoter} from "@velodrome/contracts/interfaces/IVoter.sol";
-import {IVotingEscrow} from "@velodrome/contracts/interfaces/IVotingEscrow.sol";
-import {IRewardsDistributor} from "@velodrome/contracts/interfaces/IRewardsDistributor.sol";
+import {IVoter} from "./interfaces/IVoter.sol";
+import {IVotingEscrow} from "./interfaces/IVotingEscrow.sol";
+import {IRewardsDistributor} from "./interfaces/IRewardsDistributor.sol";
 
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
@@ -31,20 +31,20 @@ abstract contract Relay is IRelay, ERC721Holder, ReentrancyGuard, AccessControlE
 
     IVoter public immutable voter;
     IVotingEscrow public immutable ve;
-    IERC20 public immutable velo;
+    IERC20 public immutable abx;
     IRewardsDistributor public immutable distributor;
     IRelayFactory public relayFactory;
 
-    IOptimizer public optimizer;
+    IOptimizerBase public optimizer;
     uint256 public keeperLastRun;
 
     constructor(address _voter, address _admin, address _relayFactory, address _optimizer, string memory _name) {
         voter = IVoter(_voter);
         ve = IVotingEscrow(voter.ve());
-        velo = IERC20(ve.token());
+        abx = IERC20(ve.token());
         relayFactory = IRelayFactory(_relayFactory);
         distributor = IRewardsDistributor(ve.distributor());
-        optimizer = IOptimizer(_optimizer);
+        optimizer = IOptimizerBase(_optimizer);
 
         name = _name;
 
@@ -96,8 +96,8 @@ abstract contract Relay is IRelay, ERC721Holder, ReentrancyGuard, AccessControlE
 
     /// @inheritdoc IRelay
     function increaseAmount(uint256 _value) external onlyRole(ALLOWED_CALLER) {
-        velo.transferFrom(msg.sender, address(this), _value);
-        _handleApproval(velo, address(ve), _value);
+        abx.transferFrom(msg.sender, address(this), _value);
+        _handleApproval(abx, address(ve), _value);
         ve.increaseAmount(mTokenId, _value);
     }
 
@@ -116,7 +116,7 @@ abstract contract Relay is IRelay, ERC721Holder, ReentrancyGuard, AccessControlE
         if (_optimizer == address(0)) revert ZeroAddress();
         if (address(optimizer) == _optimizer) revert SameOptimizer();
         if (!relayFactory.isOptimizer(_optimizer)) revert OptimizerNotApproved();
-        optimizer = IOptimizer(_optimizer);
+        optimizer = IOptimizerBase(_optimizer);
         emit SetOptimizer(_optimizer);
     }
 
